@@ -1,17 +1,18 @@
 # Improving Table View and Collection View APIs
 
 
-# TLDR
-## Registering cells 
+## TLDR
+### Registering cells 
 ```
-tableView.register(UINib(nibName: "TableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "TableViewCell")
+tableView.register(UINib(nibName: "TableViewCell",
+                   bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "TableViewCell")
 ```
 vs 
 ```
 tableView.register(TableViewCell.self)
 ```
 
-## Dequeueing cells
+### Dequeueing cells
 ```
 tableView.dequeueReusableCell(withIdentifier: "TableViewCell", for: indexPath)
 ```
@@ -21,9 +22,9 @@ tableView.dequeue(TableViewCell.self, indexPath: indexPath)
 ```
 
 
-# Protocols
-
-## ReuseIdentifiable 
+## Protocols
+### ReuseIdentifiable 
+#### Implementation
 - **reuseID** - returns the name of the class
 ```
 protocol ReuseIdentifiable {
@@ -35,13 +36,14 @@ extension ReuseIdentifiable {
 }
 ```
 
-### Usage
+#### Usage
 ```
 class TableViewCell: UITableViewCell, ReuseIdentifiable {}
 class CollectionViewCell: UICollectionViewCell, ReuseIdentifiable {}
 ```
 
-## NibLoadable 
+### NibLoadable 
+#### Implementation
 - **nib** - returns a `UINib` using the `reuseID` and the bundle of the class
 ```
   protocol NibLoadable: class {
@@ -49,30 +51,34 @@ class CollectionViewCell: UICollectionViewCell, ReuseIdentifiable {}
   }
 
   extension NibLoadable where Self: ReuseIdentifiable {
-      static var nib: UINib { return UINib(nibName: reuseID, bundle: Bundle(for: Self.self)) }
+      static var nib: UINib {
+          return UINib(nibName: reuseID, bundle: Bundle(for: Self.self))
+      }
   }
 ```
 
-### Usage
+#### Usage
 ```
   class TableViewCell: UITableViewCell, NibLoadable, ReuseIdentifiable {}
   class CollectionViewCell: UICollectionViewCell, NibLoadable, ReuseIdentifiable {}
 ```
 
 
-# Safer Table View and Collection View
+## Safer Table View and Collection View
 
 
-## Registering cells 
-
-### 🍎's API
+### Registering cells 
+#### Implementation
+##### 🍎's API
 To register a nib, we normally pass string literals for the nib name and reuseIdentifier.
 ```
-  tableView.register(UINib(nibName: "TableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "TableViewCell")
+  tableView.register(UINib(nibName: "TableViewCell",
+                     bundle: Bundle(for: type(of: self))),
+                     forCellReuseIdentifier: "TableViewCell")
 ```
 
 
-### Cleaner way
+##### Cleaner way
 
 Create a convenience method that takes in a cell that adopts both `NibLoadable` & `ReuseIdentifiable`. We can then use the `nib` and `reuseID` properties to register the cell
 ```
@@ -81,19 +87,20 @@ Create a convenience method that takes in a cell that adopts both `NibLoadable` 
   }
 ```
 
-### Usage
+#### Usage
 ```
   tableView.register(TableViewCell.self)
 ```
 
-## Dequeueing cells
-### 🍎's API
+### Dequeueing cells
+#### Implementation
+##### 🍎's API
 To dequeue a cell, we need to pass in the cell's reuse identifier. Again, we would normal just pass in a string literal
 ```
   tableView.dequeueReusableCell(withIdentifier: "TableViewCell", for: indexPath)
 ```
 
-### Cleaner way
+#### Cleaner way
 Create a convenience method that takes in a cell that adopts `ReuseIdentifiable`. We then use the `reuseID` property when dequeueing a cell
 ```
   func dequeue<T: ReuseIdentifiable>(_ cellClass: T.Type, indexPath: IndexPath) -> T {
@@ -101,12 +108,13 @@ Create a convenience method that takes in a cell that adopts `ReuseIdentifiable`
   }
 ```
 
-### Usage
+#### Usage
 ```
   tableView.dequeue(TableViewCell.self, indexPath: indexPath)
 ```
 
-## Implementation for Table View and Collection View
+## Extending Table View and Collection View
+### Implementation
 ```
 extension UITableView {
     func register<T: NibLoadable & ReuseIdentifiable>(_ cellClass: T.Type) {
