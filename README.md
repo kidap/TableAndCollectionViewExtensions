@@ -2,7 +2,7 @@
 
 
 ## TLDR
-### Registering cells 
+### 1. Registering cells 
 ```
 tableView.register(UINib(nibName: "TableViewCell",
                    bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "TableViewCell")
@@ -12,7 +12,7 @@ vs
 tableView.register(TableViewCell.self)
 ```
 
-### Dequeueing cells
+### 2. Dequeueing cells
 ```
 tableView.dequeueReusableCell(withIdentifier: "TableViewCell", for: indexPath)
 ```
@@ -23,7 +23,7 @@ tableView.dequeue(TableViewCell.self, indexPath: indexPath)
 
 
 ## Protocols
-### ReuseIdentifiable 
+### 1. ReuseIdentifiable 
 #### Implementation
 - **reuseID** - returns the name of the class
 ```
@@ -42,7 +42,7 @@ class TableViewCell: UITableViewCell, ReuseIdentifiable {}
 class CollectionViewCell: UICollectionViewCell, ReuseIdentifiable {}
 ```
 
-### NibLoadable 
+### 2. NibLoadable 
 #### Implementation
 - **nib** - returns a `UINib` using the `reuseID` and the bundle of the class
 ```
@@ -67,7 +67,7 @@ class CollectionViewCell: UICollectionViewCell, ReuseIdentifiable {}
 ## Safer Table View and Collection View
 
 
-### Registering cells 
+### 1. Registering cells 
 #### Implementation
 ##### 🍎's API
 To register a nib, we normally pass string literals for the nib name and reuseIdentifier.
@@ -92,7 +92,7 @@ Create a convenience method that takes in a cell that adopts both `NibLoadable` 
   tableView.register(TableViewCell.self)
 ```
 
-### Dequeueing cells
+### 2. Dequeueing cells
 #### Implementation
 ##### 🍎's API
 To dequeue a cell, we need to pass in the cell's reuse identifier. Again, we would normal just pass in a string literal
