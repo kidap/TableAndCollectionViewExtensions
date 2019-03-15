@@ -47,6 +47,9 @@ let tableView = UITableView(frame: .zero, style: .plain)
 let layout = UICollectionViewLayout()
 let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
 
+tableView.register(TableViewCell.self)
+collectionView.register(CollectionViewCell.self)
+
 let indexPath = IndexPath(row: 0, section: 0)
 let cvCell = tableView.dequeue(TableViewCell.self, indexPath: indexPath)
 let tvCell = collectionView.dequeue(CollectionViewCell.self, indexPath: indexPath)
